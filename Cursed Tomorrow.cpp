@@ -1,4 +1,8 @@
 #include "raylib.h"
+#include <stack>
+#include <deque>
+#include <queue>
+#include <vector>
 #include <iostream>
 
 using namespace std;
@@ -30,21 +34,93 @@ bool spaceGate = false;
 bool warningScreen = true;
 bool level1Start = true;
 bool level5Start = true;
+bool quote = true;
 float ping = 30;
 float pingMeter = 0;
 float tempPositionx = 0;
 float tempPositiony = 0;
+float variable = 2.2;
+int commonIterator = 0;
+int commonIterator_Endgame = 0;
+bool popNow = true;
 //int jumpScareCounter1 = 0;
 //int jumpScareCounter2 = 0;
 //int jumpScareCounter3 = 0;
+double result = 0;
 
-enum Delays { DEALY_SCREEN = 180 };
+enum Delays { DEALY_SCREEN = 180 , DEALY_SCREEN_COMECLOSER = 30};
 
 class Audio;
 class PNGS;
 class Character;
 class Stages;
 class Levels;
+deque <Texture2D> Textures;
+deque<Texture2D> ::iterator itr = Textures.begin();
+
+
+class GetCharacterValues {
+private:
+    int MovementCounter = 0;
+public:
+
+    vector<char> moveCharacter(string string) {
+
+        deque <char> stack;
+        deque<char> ::iterator itr = stack.begin();
+        vector <char> str(string.begin(), string.end());
+        vector <char> result(string.size());
+        vector <char> ::iterator rslt_itr = result.begin();
+
+        for (vector <char> ::iterator str_itr = str.begin(); str_itr !=
+            str.end(); str_itr++) {
+    
+            if (*str_itr == 'Y') {
+                stack.push_front(*str_itr);
+            }
+            else if (*str_itr == 'X') {
+                while (stack.front() != '-99') {
+                    stack.pop_front();
+                }
+                stack.pop_front();
+            }
+        }
+        while (!stack.empty()) {
+            *rslt_itr = stack.front();
+            rslt_itr--;
+            stack.pop_front();
+        }
+        return result;
+    }
+    double evaluatePosition_Gate(vector<char> position_of_x_axis) {
+        deque<double> stack;
+        double var1_x = 0;
+        double var2 = 0;
+
+        int i = 0;
+        for (vector<char> ::iterator post_itr = position_of_x_axis.begin(); post_itr
+            != (position_of_x_axis.end() - MovementCounter); post_itr++) {
+            if (*post_itr >= '1' && *post_itr <= '800') {
+                stack.push_front((*post_itr));
+            }
+            else {
+               
+                var1_x = stack.front();
+       
+                switch (*post_itr) {
+                case '54':
+                    stack.push_front(pow(var2, var1_x));
+                    break;
+                case '1':
+                    stack.push_front(var2 - var1_x);
+                    break;
+                }
+            }
+            //cout << "\n\n front : " << stack.front() << " ";
+        }
+        return stack.front();
+    }
+};
 
 //class Audio {
 //public:
@@ -56,6 +132,18 @@ class Levels;
 //        }
 //    }
 //};
+
+/*
+
+DSA concpets to Implement 
+
+Stack
+Queue
+Dequeue
+Trees
+
+
+*/
 
 class PNGS {
 public:
@@ -124,6 +212,64 @@ public:
     Texture2D quotePNG = LoadTexture("levelSelector/quote.png");
     Texture2D warningPNG = LoadTexture("levelSelector/warning.png");
     Texture2D jumpScarePNG = LoadTexture("levelSelector/jumpScare.png");
+    Texture2D blankPNG = LoadTexture("levelSelector/blank.png");
+
+    // JumpScareBitmaps
+
+    Texture2D jumpScarePNG01 = LoadTexture("levelSelector/Bitmap01.png");
+    Texture2D jumpScarePNG02 = LoadTexture("levelSelector/Bitmap02.png");
+    Texture2D jumpScarePNG03 = LoadTexture("levelSelector/Bitmap03.png");
+    Texture2D jumpScarePNG04 = LoadTexture("levelSelector/Bitmap04.png");
+    Texture2D jumpScarePNG05 = LoadTexture("levelSelector/Bitmap05.png");
+    Texture2D jumpScarePNG06 = LoadTexture("levelSelector/Bitmap06.png");
+    Texture2D jumpScarePNG07 = LoadTexture("levelSelector/Bitmap07.png");
+    Texture2D jumpScarePNG08 = LoadTexture("levelSelector/Bitmap08.png");
+    Texture2D jumpScarePNG09 = LoadTexture("levelSelector/Bitmap09.png");
+    Texture2D jumpScarePNG10 = LoadTexture("levelSelector/Bitmap10.png");
+    Texture2D jumpScarePNG11 = LoadTexture("levelSelector/Bitmap11.png");
+    Texture2D jumpScarePNG12 = LoadTexture("levelSelector/Bitmap12.png");
+    Texture2D jumpScarePNG13 = LoadTexture("levelSelector/Bitmap13.png");
+    Texture2D jumpScarePNG14 = LoadTexture("levelSelector/Bitmap14.png");
+    Texture2D jumpScarePNG15 = LoadTexture("levelSelector/Bitmap15.png");
+    Texture2D jumpScarePNG16 = LoadTexture("levelSelector/Bitmap16.png");
+    Texture2D jumpScarePNG17 = LoadTexture("levelSelector/Bitmap17.png");
+    Texture2D jumpScarePNG18 = LoadTexture("levelSelector/Bitmap18.png");
+    Texture2D jumpScarePNG19 = LoadTexture("levelSelector/Bitmap19.png");
+
+    PNGS() {
+
+        Textures.push_front(warningPNG);
+        Textures.push_front(quotePNG);
+        Textures.push_front(mainScreenPng);
+        Textures.push_front(afterLevel6PNG);
+        Textures.push_front(PNG1);
+        Textures.push_front(PNG2);
+        Textures.push_front(PNG3);
+        Textures.push_front(behindYouPNG);
+        Textures.push_front(blankPNG);
+        Textures.push_front(jumpScarePNG01);
+        Textures.push_front(jumpScarePNG02);
+        Textures.push_front(jumpScarePNG03);
+        Textures.push_front(jumpScarePNG04);
+        Textures.push_front(jumpScarePNG05);
+        Textures.push_front(jumpScarePNG06);
+        Textures.push_front(jumpScarePNG07);
+        Textures.push_front(jumpScarePNG08);
+        Textures.push_front(jumpScarePNG09);
+        Textures.push_front(jumpScarePNG10);
+        Textures.push_front(jumpScarePNG11);
+        Textures.push_front(jumpScarePNG12);
+        Textures.push_front(jumpScarePNG13);
+        Textures.push_front(jumpScarePNG14);
+        Textures.push_front(jumpScarePNG15);
+        Textures.push_front(jumpScarePNG16);
+        Textures.push_front(jumpScarePNG17);
+        Textures.push_front(jumpScarePNG18);
+        Textures.push_front(jumpScarePNG19);
+        //Textures.push_front(blankPNG);
+    }
+
+
 
 };
 
@@ -154,8 +300,8 @@ public:
 
         if (IsKeyDown(KEY_RIGHT)) StickPosition.x += speed;
         if (IsKeyDown(KEY_LEFT)) StickPosition.x -= speed;
-        if (IsKeyDown(KEY_UP)) StickPosition.y -= speed;
-        if (IsKeyDown(KEY_DOWN)) StickPosition.y += speed;
+        //if (IsKeyDown(KEY_UP)) StickPosition.y -= speed;
+        //if (IsKeyDown(KEY_DOWN)) StickPosition.y += speed;
 
         if (StickPosition.x <= 42) StickPosition.x -= 0.8f;
         if (StickPosition.x >= 1310) StickPosition.x -= 1.0f;
@@ -868,42 +1014,45 @@ public:
     void gameEnd(PNGS png1) {
 
         BeginDrawing();
-        spaceLayers += 0.4;
+        spaceLayers += 1;
 
-        if (spaceLayers <= 80) {
-            DrawTexture(png1.afterLevel6PNG, 0, 0, WHITE); // afterLevel6
-        }
-        else if (spaceLayers <= 140) {
-            DrawTexture(png1.PNG1, 0, 0, WHITE); // afterLevel6
-        }
-        else if (spaceLayers <= 180) {
-            DrawTexture(png1.PNG2, 0, 0, WHITE); // afterLevel6
-        }
-        else if (spaceLayers <= 240) {
-            DrawTexture(png1.PNG3, 0, 0, WHITE); // afterLevel6
-        }
-        else if (spaceLayers <= 300) {
-            DrawTexture(png1.behindYouPNG, 0, 0, WHITE); // afterLevel6
-        }
-        else if (spaceLayers <= 310) {
-            DrawTexture(png1.escapePNG, 0, 0, WHITE); // afterLevel6
-            /* Rectangle src = { 0,0,png1.jumpScarePNG.width,png1.jumpScarePNG.height / 19 };
-
-             DrawTexturePro(png1.jumpScarePNG, src, {screenWidth/2,screenHeight/2,src.width,src.height}, { 0,0 }, 0, WHITE);
-             if (jumpScareCounter1 >= (60/8))
-             {
-                 jumpScareCounter1 = 0;
-                 jumpScareCounter2++;
-                 jumpScareCounter1 = 0;
-
-                 if (jumpScareCounter2 > 5) jumpScareCounter2 = 0;
-                 src.y = (float)jumpScareCounter2 * (float)png1.jumpScarePNG.height / 19;
-             }*/
+        if (popNow) {
+            Textures.pop_back();
+            popNow = false;
         }
 
-        //jumpScareCounter1
-        //jumpScareCounter2
-            //jumpScareCounter3
+        if ((spaceLayers >= (DEALY_SCREEN_COMECLOSER * variable)) && (commonIterator_Endgame < 24)) {
+            
+            Textures.pop_back();
+
+            switch (commonIterator_Endgame) {
+
+            case 0:
+                variable *= 0.7; // timing of 1
+                break;
+            case 1:
+                variable *= 0.7; // timing of 2
+                break;
+            case 2:
+                variable *= 0.7; // timing of 3
+                break;
+            case 3:
+                variable *= 1; // timing of behind yo
+                break;
+            case 4:
+                variable *= 1; // Blank of im behind you
+                break;
+            default:
+                variable *= 0.2;
+                break;
+            }
+         
+            spaceLayers = 0;
+            commonIterator_Endgame++;
+            cout << commonIterator_Endgame;
+        }
+
+        DrawTexture(Textures.back(), 0, 0, WHITE);
 
         EndDrawing();
     }
@@ -919,8 +1068,9 @@ int main(void)
     SetTargetFPS(60);
 
     Music levelMusic = LoadMusicStream("audio/levelMusic.mp3");
-//    Music mainMusic = LoadMusicStream("audio/main.mp3");
+    //Music mainMusic = LoadMusicStream("audio/main.mp3");
     //Main Screen PNGs
+
     PNGS png;
     //Stickman
 
@@ -934,6 +1084,7 @@ int main(void)
         jumpScareCounter3 += 1;*/
         PlayMusicStream(levelMusic);
         UpdateMusicStream(levelMusic);
+
         if (showWelcome)
         {
 
@@ -966,16 +1117,25 @@ int main(void)
 
             BeginDrawing();
 
-            DrawTexture(png.mainScreenPng, 0, 0, WHITE);
-            DrawTexture(png.newGamePng, 170, 80, WHITE);
-            DrawTexture(png.levelsPng, 210, 160, WHITE);
-            DrawTexture(png.creditsPng, 195, 240, WHITE);
-
             delayMeter += 1;
 
+            if ((delayMeter >= (DEALY_SCREEN * variable)) && (commonIterator < 2)) {
+                Textures.pop_back();
+                variable *= 1.7;
+                commonIterator++;
+            }
 
-            if ((delayMeter < DEALY_SCREEN * 4) && warningScreen) {
-                DrawTexture(png.quotePNG, 0, 0, WHITE);
+            DrawTexture(Textures.back(), 0, 0, WHITE);
+
+            if (commonIterator >= 2) {
+                DrawTexture(png.newGamePng, 170, 80, WHITE);
+                DrawTexture(png.levelsPng, 210, 160, WHITE);
+                DrawTexture(png.creditsPng, 195, 240, WHITE);
+
+            }
+
+          /*  if ((delayMeter < DEALY_SCREEN * 4) && warningScreen) {
+                DrawTexture(Textures.back(), 0, 0, WHITE);
             }
 
             if ((delayMeter <= DEALY_SCREEN * 2) && warningScreen) {
@@ -984,7 +1144,7 @@ int main(void)
 
             if ((delayMeter >= (DEALY_SCREEN * 4) && warningScreen)) {
                 warningScreen = false;
-            }
+            }*/
 
             EndDrawing();
 
@@ -1136,3 +1296,4 @@ int main(void)
         }
     }
 }
+
